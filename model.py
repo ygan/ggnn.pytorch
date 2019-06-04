@@ -67,13 +67,13 @@ class GGNN(nn.Module):
         super(GGNN, self).__init__()
 
         assert (opt.state_dim >= opt.annotation_dim,  \
-                'state_dim must be no less than annotation_dim')
+                'state_dim must be no less than annotation_dim') # state_dim is GGNN hidden state size
 
         self.state_dim = opt.state_dim
         self.annotation_dim = opt.annotation_dim
-        self.n_edge_types = opt.n_edge_types
-        self.n_node = opt.n_node
-        self.n_steps = opt.n_steps
+        self.n_edge_types = opt.n_edge_types        # 2 in task 4
+        self.n_node = opt.n_node                    # 4 in task 4
+        self.n_steps = opt.n_steps                  # propogation steps number of GGNN
 
         for i in range(self.n_edge_types):
             # incoming and outgoing edge embedding
@@ -110,6 +110,7 @@ class GGNN(nn.Module):
             for i in range(self.n_edge_types):
                 in_states.append(self.in_fcs[i](prop_state))
                 out_states.append(self.out_fcs[i](prop_state))
+
             in_states = torch.stack(in_states).transpose(0, 1).contiguous()
             in_states = in_states.view(-1, self.n_node*self.n_edge_types, self.state_dim)
             out_states = torch.stack(out_states).transpose(0, 1).contiguous()

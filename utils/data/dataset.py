@@ -78,14 +78,40 @@ def data_convert(data_list, n_annotation_dim):
 
 def create_adjacency_matrix(edges, n_nodes, n_edge_types):
     a = np.zeros([n_nodes, n_nodes * n_edge_types * 2])
+
+    # In task 4:
+    # when edges = [[2,1,3],[1,1,2]]
+    # The a = (4*16)
+    # [[0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0. 0. 0.]
+    #  [1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0. 0.]
+    #  [0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+    #  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]]
+    # It is:
+    #        edge_1 <- node_1~4 , edge_2 <- node_1~4 ,  edge_1 -> node_1~4 , edge_2 -> node_1~4
+    # node_1:[[0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0. 0. 0.]
+    # node_2:[1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0. 0.]
+    # node_3:[0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+    # node_4:[0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]]
+    # That is why the shape of a = [number_node, number_node * number_edge * 2]
+    # So [2,1,3] become: "node_2 edge_1 -> node_3" and "node_3 edge_1 <- node_2"
+    # So the meaning of 1 in a is:
+    # [[0. 0. 0. 0. 0. 0. 0. 0. 0. node_1 edge_1 -> node_2. 0. 0. 0. 0. 0. 0.]
+    #  [node_2 edge_1 <- node_1. 0. 0. 0. 0. 0. 0. 0. 0. 0. node_2 edge_1 -> node_3. 0. 0. 0. 0. 0.]
+    #  [0. node_3 edge_1 <- node_2. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+    #  [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]]
+
     for edge in edges:
         src_idx = edge[0]
         e_type = edge[1]
         tgt_idx = edge[2]
         a[tgt_idx-1][(e_type - 1) * n_nodes + src_idx - 1] =  1
         a[src_idx-1][(e_type - 1 + n_edge_types) * n_nodes + tgt_idx - 1] =  1
+        # src_idx = edge[0] - 1
+        # e_type  = edge[1] - 1
+        # tgt_idx = edge[2] - 1
+        # a[tgt_idx][(e_type) * n_nodes + src_idx] = 1
+        # a[src_idx][(e_type + n_edge_types) * n_nodes + tgt_idx] = 1
     return a
-
 
 class bAbIDataset():
     """
