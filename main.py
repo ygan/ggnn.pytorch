@@ -20,7 +20,7 @@ parser.add_argument('--state_dim', type=int, default=4, help='GGNN hidden state 
 parser.add_argument('--n_steps', type=int, default=5, help='propogation steps number of GGNN')
 parser.add_argument('--niter', type=int, default=10, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.01, help='learning rate')
-parser.add_argument('--cuda', action='store_true', default=True, help='enables cuda')
+parser.add_argument('--cuda', action='store_true', default=False, help='enables cuda')
 parser.add_argument('--verbal', action='store_true', help='print training info or not')
 parser.add_argument('--manualSeed', type=int, help='manual seed')
 
@@ -55,6 +55,10 @@ if opt.cuda:
 # task_id is task(question) type. You can consider it is edge.
 # node_id is node type
 # annotation is one-hot encoding from number in target_list[1], such as: 2 become [0, 1, 0, 0]
+
+# annotation can be considered as (left) node and task_id can be considered as edge.
+# task_output can be considered as (right) node. But the edge (task_id) use different encoding.
+# detail is below:
 
 # edge_type.txt:
 # e=2

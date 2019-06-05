@@ -40,6 +40,8 @@ class Propogator(nn.Module):
         )
 
     def forward(self, state_in, state_out, state_cur, A):
+        # in the dataset.py, we can find out that left is go in to the node, right is out.
+        # So here split the A:
         A_in = A[:, :, :self.n_node*self.n_edge_types]
         A_out = A[:, :, self.n_node*self.n_edge_types:]
 
@@ -108,6 +110,7 @@ class GGNN(nn.Module):
             in_states = []
             out_states = []
             for i in range(self.n_edge_types):
+                # initial prop_state is padding + annotation
                 in_states.append(self.in_fcs[i](prop_state))
                 out_states.append(self.out_fcs[i](prop_state))
 
