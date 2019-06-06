@@ -49,8 +49,8 @@ class Propogator(nn.Module):
         a_out = torch.bmm(A_out, state_out)
         a = torch.cat((a_in, a_out, state_cur), 2)
 
-        r = self.reset_gate(a)
-        z = self.update_gate(a)
+        r = self.reset_gate(a)  # if r = 0, means do not send the state_cur to h_hat
+        z = self.update_gate(a) # if z = 0, means it will not update the state_cur in next round.
         joined_input = torch.cat((a_in, a_out, r * state_cur), 2)
         h_hat = self.tansform(joined_input)
 
@@ -109,6 +109,10 @@ class GGNN(nn.Module):
         for i_step in range(self.n_steps):
             in_states = []
             out_states = []
+
+            # In the beginning, the prop_state only contain the annotation of input target node, which is padding + annotation
+            # And then, prop_state * A_in,
+
             for i in range(self.n_edge_types):
                 # initial prop_state is padding + annotation
                 in_states.append(self.in_fcs[i](prop_state))
